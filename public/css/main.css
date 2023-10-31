@@ -1,0 +1,151 @@
+:root {
+    --spotify-black: #191414;
+    --spotify-dark-gray: #282828;
+    --spotify-light-gray: #b3b3b3;
+    --spotify-green: #1DB954;
+    --spotify-white: #ffffff;
+}
+  
+body {
+    background-color: var(--spotify-black);
+    color: var(--spotify-light-gray);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  
+}
+  
+  a {
+    color: var(--spotify-green);
+    text-decoration: none;
+  }
+  
+  a:hover,
+  a:focus {
+    text-decoration: underline;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--spotify-white);
+  }
+  
+  .track {
+    background-color: var(--spotify-dark-gray);
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  
+  .track h3 {
+    color: var(--spotify-white);
+  }
+  
+  .track p {
+    color: var(--spotify-light-gray);
+  }
+  
+  /* Add hover effect for interactive elements */
+  .button, .track, .playlist {
+    transition: transform 0.3s ease;
+  }
+  
+  .button:hover, .track:hover, .playlist:hover {
+    transform: scale(1.05);
+  }
+  /* Style the playlist and track containers */
+  #playlistContainer, #tracksContainer {
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Ensure text is readable and not too large */
+  #playlistContainer h3,
+  #tracksContainer h3 {
+    font-size: 1.2rem;
+  }
+  
+  #playlistContainer p,
+  #tracksContainer p {
+    font-size: 1rem;
+  }
+  
+  /* This class is applied to each playlist and track */
+  .playlist, .track {
+    border: 1px solid var(--spotify-dark-gray);
+    background-color: var(--spotify-black);
+  }
+  
+  /* This gives a bit of a gap between your flex items */
+  .playlist, .track {
+    margin-right: 10px;
+  }
+  
+  /* Additional global styling */
+  button {
+    background-color: var(--spotify-green);
+    color: var(--spotify-white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #17e650; /* A lighter green */
+}
+#tracksContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* This will center the track divs */
+  max-width: 800px; /* Adjust the max-width as needed */
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.track {
+  display: flex;
+  flex-direction: row; /* Arrange elements in a row */
+  align-items: center; /* Center items in the track div */
+  background-color: var(--spotify-dark-gray);
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  width: 100%; /* Make the track div take full width of the container */
+}
+
+.track img {
+    width: 60px; /* Adjust image size */
+    height: 60px; /* Adjust image size */
+    margin-right: 10px; /* Space between image and track info */
+    object-fit: cover; /* Ensure the image covers the area without distortion */
+    border-radius: 5px; /* Optional: round the corners of the image */
+}
+.track h3 {
+  margin: 0;
+  font-size: 1rem; /* Adjust font size */
+  color: var(--spotify-white);
+  flex-grow: 1; /* Allows the track name to take up available space */
+}
+
+.track p {
+  padding: 5px;
+  margin: 0;
+  font-size: 0.8rem; /* Adjust font size */
+  color: var(--spotify-light-gray);
+}
+
+.track a {
+  margin-left: auto; /* Pushes the link to the end of the container */
+  padding: 5px 10px;
+  background-color: var(--spotify-green);
+  color: var(--spotify-white);
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.selected {
+    border: 2px solid #1DB954; /* Spotify green for selection */
+    background-color: #282828; /* Darker background for contrast */
+}
