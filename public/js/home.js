@@ -67,7 +67,6 @@ async function loadPlaylistTracks(playlistId) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const tracks = await response.json();
-        console.log(tracks)
         displayTracks(tracks);
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
@@ -78,37 +77,43 @@ function displayTracks(tracks) {
     const tracksContainer = document.getElementById('tracksContainer');
     tracksContainer.innerHTML = ''; // Clear the tracks container
     tracks.forEach(track => {
-      const trackDiv = document.createElement('div');
-      trackDiv.classList.add('track');
-  
-      const trackName = document.createElement('h3');
-      trackName.textContent = track['track'].name;
-  
-      const trackArtists = document.createElement('p');
-      trackArtists.textContent = track['track'].artists.map(artist => artist.name).join(', ');
-  
-      const trackLink = document.createElement('a');
-      trackLink.href = track['track'].external_urls.spotify; // Link to the track on Spotify
-      trackLink.textContent = 'Listen on Spotify';
-      trackLink.target = '_blank'; // Opens the link in a new tab/window
-  
-      const albumImage = new Image();
-      albumImage.src = track['track'].album.images[0].url; // The URL to the album cover image
-  
-      // Append the new elements to the trackDiv
-      trackDiv.appendChild(trackName);
-      trackDiv.appendChild(trackArtists);
-      trackDiv.appendChild(trackLink);
-      trackDiv.appendChild(albumImage);
-  
-      // Append the trackDiv to the tracksContainer
-      tracksContainer.appendChild(trackDiv);
+        trackInfo = track['track']
+        const trackDiv = document.createElement('div');
+        trackDiv.classList.add('track');
+    
+        const trackName = document.createElement('h3');
+        trackName.textContent = trackInfo.name;
+    
+        const trackArtists = document.createElement('p');
+        trackArtists.textContent = trackInfo.artists.map(artist => artist.name).join(', ');
+    
+        const trackLink = document.createElement('a');
+        trackLink.href = trackInfo.external_urls.spotify; // Link to the track on Spotify
+        trackLink.textContent = 'Listen on Spotify';
+        trackLink.target = '_blank'; // Opens the link in a new tab/window
+    
+        const albumImage = new Image();
+        albumImage.src = trackInfo.album.images[0].url; // The URL to the album cover image
+
+        // Append the new elements to the trackDiv
+        trackDiv.appendChild(trackName);
+        trackDiv.appendChild(trackArtists);
+        trackDiv.appendChild(trackLink);
+        trackDiv.appendChild(albumImage);
+
+        // Append the trackDiv to the tracksContainer
+        tracksContainer.appendChild(trackDiv);
     });
 }
 
+
+// This is stuff that will happen when the page finishes loading
 document.addEventListener('DOMContentLoaded', function() {
+    // Will instantly call getplaylist endpoint to grab data
     callApi('/getPlaylists')
         .then(data => {
+            // After it gets data from express server, populate playlist div
+            // Add event handler to toggle selection
             populatePlaylists(data);
             document.querySelectorAll('.playlist').forEach(playlist => {
                 playlist.addEventListener('click', toggleSelection);
@@ -119,10 +124,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 });
 
+// uhhh, doesn't do anything, it's meant to get profile information
 document.getElementById('getMeButton').addEventListener('click', function() {
     callApi('/getMe');
 });
 
+// deprecated function
 document.getElementById('getPlaylistsButton').addEventListener('click', function() {
     callApi('/getPlaylists').then(data => {
         console.log(data)
@@ -130,11 +137,13 @@ document.getElementById('getPlaylistsButton').addEventListener('click', function
     }).catch (err => console.log(err))
 });
 
-
+// doesn't do anything yet
 document.getElementById('refreshButton').addEventListener('click', function() {
     callApi('/refresh');
 });
 
+// small wrapper, idk it's not really necessary
+// good to understand tho
 async function callApi(endpoint) {
     const response = await fetch(endpoint, {
       method: 'POST',
@@ -148,6 +157,8 @@ async function callApi(endpoint) {
     return await response.json();
 }
 
+
+// little helper for selection feature
 function toggleSelection(event) {
     // Get all tracks
     const allPlaylist = document.querySelectorAll('.playlist');
@@ -160,5 +171,3 @@ function toggleSelection(event) {
     // Add the 'selected' class to the clicked track
     event.currentTarget.classList.add('selected');
 }
-  
-  // Add the event listener to each track

@@ -1,5 +1,7 @@
 
-// Config and Modules
+/********************************************************************
+ *                         CONFIGURATION                            *
+ ********************************************************************/
 require('dotenv').config();
 const spotifyAPI = require('spotify-web-api-node');
 const mongoose = require('mongoose');
@@ -33,7 +35,9 @@ const userSchema = new Schema({
 
 const User = mongoose.model('User', userSchema);
 
-// Helper functions
+/********************************************************************
+ *                           UTILITIES                              *
+ ********************************************************************/
 function generateRandomString(length) {
     let text = '';
     let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -58,7 +62,6 @@ async function updateUser(userID, accessToken, refreshToken, expires_in) {
         useFindAndModify: false // use native findOneAndUpdate rather than findAndModify
       }
     );
-    console.log('Updated user:');
   } catch (error) {
     console.error('Error updating user:', error);
   }
@@ -112,6 +115,9 @@ function calculateExpiryTime(expiresIn) {
   return expiryTimeMilliseconds;
 }
 
+/********************************************************************
+ *                           MIDDLEWARES                            *
+ ********************************************************************/
 // Middleware, Express Paths, Database
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.json());
@@ -119,18 +125,20 @@ app.use(cookieParser(key));
 
 // Home screen route
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', '/generic.html'));
+    res.status(200).sendFile(path.join(__dirname, 'public', '/generic.html'));
 });
 
 // Login Oauth Route
 // Don't touch this tbh.
 app.get('/login', function(req, res) {
-    var state = generateRandomString(16);
-    var scope = ['user-read-private', 'user-read-email', 'playlist-read-private', 'playlist-read-collaborative', 'user-library-read', 'user-top-read']
-    var spotifyClient = new spotifyAPI(credentials)
-    
-    var authLink = spotifyClient.createAuthorizeURL(scope, state)
-    res.redirect(authLink)
+  // Generates random crypto-key for verifcaiton
+  var state = generateRandomString(16);
+  var scope = ['user-read-private', 'user-read-email', 'playlist-read-private', 'playlist-read-collaborative', 'user-library-read', 'user-top-read']
+  var spotifyClient = new spotifyAPI(credentials)
+  
+  // our little client can actually generate urls it's quite cool
+  var authLink = spotifyClient.createAuthorizeURL(scope, state)
+  res.redirect(authLink)
 });
 
 // Redirect after oauth flow finishes
@@ -150,65 +158,122 @@ app.get('/redirect', function(req, res) {
         const refreshToken = data.body['refresh_token'];
         const expires_in = data.body['expires_in'];
 
-        // Set the access token on the API object to use it in later calls
+      // Set the access token on the API object to use it in later calls
         spotifyClient.setAccessToken(accessToken);
         spotifyClient.setRefreshToken(refreshToken);
         
 
         // Now we can get the user's Spotify ID
-        return Promise.all([spotifyClient.getMe(), accessToken, refreshToken, expires_in])
-
-      }).then(([userData, accessToken, refreshToken, expires_in]) => {
+        return Promise.all([spotifyClient.getMe(), accessToken, refreshToken, expires_in])})
+      .then(( [userData, accessToken, refreshToken, expires_in] ) => {
         // userData.body.id contains the Spotify user ID
         updateUser(userData.body.id, accessToken, refreshToken, calculateExpiryTime(expires_in))
-          const jwtToken = jwt.sign({
-          userId: userData.body.id, // Using your database user ID, not Spotify's
-          // You can include other information here as needed
+
+        // Registers a signed credential token to give to users, this proves that they went through auth already.
+        const jwtToken = jwt.sign({
+          userId: userData.body.id,
           }, key, { expiresIn: 86400 });
 
-          // Redirect to home page with JWT Token
-          res.cookie('jwt', jwtToken, { httpOnly: true, secure: false });
-          res.redirect('/home.html');
-          })
-        }
+        // Redirect to home page with JWT Token as a cookie
+        res.cookie('jwt', jwtToken, { httpOnly: true, secure: false });
+        res.redirect('/home.html');
+        })
+      }
   });
 
-
-app.post('/getPlaylists', async function(req, res){
-  console.log(" ENDPOINT || GET PLAYLIST CALLED || <<")
+// Wrapper function made to process endpoints, don't touch this unless you need a foundational change
+// Which I don't think is necessary(?), not sure tbh.
+async function processEndpoint(req, method, ...kwargs) {
   try {  
+    // Read cookies from browser
     let jwtCookie = req.cookies['jwt']
+    // Decode cookies from request
     const jwtContent = jwt.verify(jwtCookie, key);
+
+    // Instantiate spotifyApiClient
     const spotifyClient = new spotifyAPI(credentials)
+
+    // Look for specific clientId in mongoDB Atlas database (This command holds until we have the data)
     client = await findUser(jwtContent['userId']);
+
+    // After a successful look up, grab the access token and refresh token for ApiClient to use to represent the user
     spotifyClient.setAccessToken(client['spotifyAccessToken'])
     spotifyClient.setRefreshToken(client['spotifyRefreshToken'])
 
-    data = await makeSpotifyApiCall(spotifyClient, 'getUserPlaylists', client, jwtContent['userId'], [jwtContent['userId']])
-    res.status(200).send(data['body']['items'])
+    // Calls the wrapper function to process the api request and returns received data.
+    data = await makeSpotifyApiCall(spotifyClient, method, client, jwtContent['userId'], ...kwargs)
+    return data;
+} catch (err){
+  console.log("Error Occured: ProcessEndpoints: ", err)
+}};
+
+/********************************************************************
+ *                              ROUTES                              *
+ ********************************************************************/
+//
+// getPlayLists endpoint, this is the api url for requesting a user's saved playlists
+app.post('/getPlaylists', async function(req, res) {
+  
+  console.log(" ENDPOINT || /getPlayLists")
+
+  try {  
+    processEndpoint(req, 'getUserPlaylists', [])
+    .then(data => res.status(200).send(data['body']['items']))
+  } catch(err) {console.log(err)}
+});
+
+// getRecent endpoint, this is the api url for requesting a user's recently played
+app.get('/getRecent', async function(req, res) {
+  console.log(" ENDPOINT || /getRecent")
+  try {  
+    processEndpoint(req, 'getMyRecentlyPlayedTracks', [])
+    .then(data => res.status(200).send(data['body']['items']))
   } catch(err) {console.log(err)}
 });
 
 
+// getRecommendations endpoint, this is the api url for requesting recommendations based on seeds
+// HEAVILY WIP, NOT SURE HOW TO IMPLEMENT YET
+app.get('/getRecommendations', async function(req, res) {
+  console.log(" ENDPOINT || /getRecent")
+  try {  
+    /* HERE IN THE {} we would put an object data containing stuff like 
+    {
+      min_energy: 0.4,
+      seed_artists: ['6mfK6Q2tzLMEchAr0e9Uzu', '4DYFVNKZ1uixa6SQTvzQwJ'],
+      min_popularity: 50
+    }
+    */
+    processEndpoint(req, 'getRecommendations', [{}])
+    .then(data => res.status(200).send(data['body']['items']))
+  } catch(err) {console.log(err)}
+});
+
+// getCurrent endpoint, this is the api url for requesting a user's current track
+app.get('/getCurrent', async function(req, res) {
+  console.log(" ENDPOINT || /getRecent")
+  try {  
+    processEndpoint(req, 'getMyCurrentPlayingTrack', [])
+    .then(data => res.status(200).send(data['body']['items']))
+  } catch(err) {console.log(err)}
+});
+
+// getPlaylistTracks endpoint, this is the api url for requesting a playlist's tracks
 app.get('/getPlaylistTracks', async function(req, res){
-  const playlistId = req.query.playlistId; // This is how you read the query parameter
-  console.log(" ENDPOINT || GET TRACKS CALLED || <<")
-  try {  
-    let jwtCookie = req.cookies['jwt']
-    const jwtContent = jwt.verify(jwtCookie, key);
-    const spotifyClient = new spotifyAPI(credentials)
-    client = await findUser(jwtContent['userId']);
-    spotifyClient.setAccessToken(client['spotifyAccessToken'])
-    spotifyClient.setRefreshToken(client['spotifyRefreshToken'])
+  // This is how you read the query parameter
+  const playlistId = req.query.playlistId;
+  console.log(" ENDPOINT || /getPlaylistTracks")
 
-    data = await makeSpotifyApiCall(spotifyClient, 'getPlaylistTracks', client, jwtContent['userId'], [playlistId])
-    res.status(200).send(data['body']['items'])
+  try {  
+    processEndpoint(req, 'getPlaylistTracks',[playlistId])
+    .then(data => res.status(200).send(data['body']['items']))
   } catch(err) {console.log(err)}
 });
 
 
-// Start the server
-
+/********************************************************************
+ *                            STARTUP                               *
+ ********************************************************************/
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Could not connect to MongoDB', err));

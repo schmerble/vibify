@@ -1,0 +1,71 @@
+:root {
+    --spotify-black: #191414;
+    --spotify-dark-gray: #282828;
+    --spotify-light-gray: #b3b3b3;
+    --spotify-green: #1DB954;
+    --spotify-white: #ffffff;
+}
+  
+body {
+    background-color: var(--spotify-black);
+    color: var(--spotify-light-gray);
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  
+}
+
+.hero {
+    overflow-x: hidden;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 100%;
+}
+
+/* The hero title styles */
+.hero-title {
+    
+    transition: transform 0.3s ease;
+    font-size: 5em; /* Large font size for the VIBIFY text */
+    color: #fff; /* White color text */
+    margin: 0;
+    margin-bottom: 20px; /* Space between title and button */
+}
+
+.hero-title:hover {
+    transform: scale(1.1);
+}
+
+/* Additional styling for the login button to make it stand out */
+.login-button {
+    font-size: 1.2em;
+    padding: 15px 45px;
+    display: inline-block;
+    padding: 10px 30px;
+    background-color: #1DB954; /* Spotify brand color */
+    color: #ffffff;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 30px; /* Rounded corners */
+    transition: background-color 0.3s ease;
+}
+
+.login-button:hover, .login-button:focus {
+    background-color: #1ed760; /* Slightly lighter green on hover/focus */
+    text-decoration: none; /* No underline on hover/focus */
+    color: white;
+}
+
+/* Adjust the hero title size on smaller screens */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 3em;
+    }
+
+    /* Adjust the button size on smaller screens */
+    .login-button {
+        font-size: 1em;
+        padding: 10px 30px;
+    }
+}
