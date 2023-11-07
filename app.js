@@ -231,22 +231,21 @@ app.get('/getRecent', async function(req, res) {
   } catch(err) {console.log(err)}
 });
 
-
 // getRecommendations endpoint, this is the api url for requesting recommendations based on seeds
-// HEAVILY WIP, NOT SURE HOW TO IMPLEMENT YET
 app.get('/getRecommendations', async function(req, res) {
-  console.log(" ENDPOINT || /getRecent")
-  try {  
-    /* HERE IN THE {} we would put an object data containing stuff like 
-    {
-      min_energy: 0.4,
-      seed_artists: ['6mfK6Q2tzLMEchAr0e9Uzu', '4DYFVNKZ1uixa6SQTvzQwJ'],
-      min_popularity: 50
-    }
-    */
-    processEndpoint(req, 'getRecommendations', [{}])
-    .then(data => res.status(200).send(data['body']['items']))
+  console.log(" ENDPOINT || /getRecommendations")
+  const seed_tracks = req.query.seed_tracks;
+  console.log("huhu", seed_tracks);
+  try {
+    processEndpoint(req, 'getRecommendations', [{ seed_tracks: seed_tracks }])
+    .then(data => res.status(200).send(data['body']))
   } catch(err) {console.log(err)}
+});
+
+app.get('/logout', async function(req, res) {
+  console.log(" ENDPOINT || /logout")
+  res.clearCookie('jwt')
+  res.redirect('/');
 });
 
 // getCurrent endpoint, this is the api url for requesting a user's current track
@@ -296,7 +295,6 @@ app.get('/getPlaylistTracks', async function(req, res){
     .then(data => res.status(200).send(data['body']['items']))
   } catch(err) {console.log(err)}
 });
-
 
 /********************************************************************
  *                            STARTUP                               *

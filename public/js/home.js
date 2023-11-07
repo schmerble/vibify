@@ -1,3 +1,4 @@
+
 let selectedPlaylistId = null;
 
 function populatePlaylists(playlists) {
@@ -10,7 +11,6 @@ function populatePlaylists(playlists) {
       playlistDiv.classList.add('playlist');
       playlistDiv.style.margin = '10px';
       playlistDiv.style.padding = '20px';
-      playlistDiv.style.border = '1px solid #ccc';
 
       playlistDiv.dataset.playlistId = playlist.id;
 
@@ -30,7 +30,7 @@ function populatePlaylists(playlists) {
         const image = document.createElement('img');
         image.src = playlist.images[0].url;
         image.alt = playlist.name;
-        image.style.width = '100px'; // Set the size as you wish
+        image.style.width = '150px'; // Set the size as you wish
   
         // Append the image to the link, then the link to the playlistDiv
         link.appendChild(image);
@@ -50,14 +50,6 @@ function populatePlaylists(playlists) {
       // Append the playlist div to the container
       container.appendChild(playlistDiv);
     });
-
-    document.getElementById('loadTracksButton').addEventListener('click', function() {
-        if (selectedPlaylistId) {
-            loadPlaylistTracks(selectedPlaylistId);
-        } else {
-            console.log('No playlist selected!');
-        }
-    });
 }
 
 async function loadPlaylistTracks(playlistId) {
@@ -68,7 +60,7 @@ async function loadPlaylistTracks(playlistId) {
         }
         const tracks = await response.json();
         //displayTracks(tracks)
-        saveDataAndCreateFaceCards(tracks)
+        startSorting(tracks);
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
     }
@@ -76,8 +68,19 @@ async function loadPlaylistTracks(playlistId) {
 
 
 function displayTop(tracks) {
-    const tracksContainer = document.getElementById('tracksContainer');
+    const tracksContainer = document.getElementById('tracksTop');
+    tracksContainer.style.visibility = 'visible'
+    tracksContainer.style.display = 'inherit'
+    
     tracksContainer.innerHTML = ''; // Clear the tracks container
+
+    const startDiv = document.createElement('div');
+    startDiv.classList.add('track-start');
+    const startText = document.createElement('h3');
+    startText.textContent = "Your Top Songs:"
+    startDiv.appendChild(startText)
+    tracksContainer.appendChild(startDiv)
+
     tracks.forEach((trackInfo, index) => { 
         index++;
         const trackDiv = document.createElement('div');
@@ -108,9 +111,57 @@ function displayTop(tracks) {
         tracksContainer.appendChild(trackDiv);
     });
 }
+
+
+function displayRecommendations(tracks) {
+    const tracksContainer = document.getElementById('tracksRecommendation');
+    tracksContainer.style.visibility = 'visible'
+    tracksContainer.style.display = 'inherit'
+    tracksContainer.innerHTML = ''; // Clear the tracks container
+
+
+    const startDiv = document.createElement('div');
+    startDiv.classList.add('track-start');
+    const startText = document.createElement('h3');
+    startText.textContent = "Your Recommended Songs:"
+    startDiv.appendChild(startText)
+    tracksContainer.appendChild(startDiv)
+
+    tracks.forEach((trackInfo, index) => { 
+        index++;
+        const trackDiv = document.createElement('div');
+        trackDiv.classList.add('track');
+        
+    
+        const trackName = document.createElement('h3');
+        trackName.textContent = index + ". " + trackInfo.name;
+    
+        const trackArtists = document.createElement('p');
+        trackArtists.textContent = trackInfo.artists.map(artist => artist.name).join(', ');
+    
+        const trackLink = document.createElement('a');
+        trackLink.href = trackInfo.external_urls.spotify; // Link to the track on Spotify
+        trackLink.textContent = 'Listen on Spotify';
+        trackLink.target = '_blank'; // Opens the link in a new tab/window
+    
+        const albumImage = new Image();
+        albumImage.src = trackInfo.album.images[0].url; // The URL to the album cover image
+
+        // Append the new elements to the trackDiv
+        trackDiv.appendChild(trackName);
+        trackDiv.appendChild(trackArtists);
+        trackDiv.appendChild(trackLink);
+        trackDiv.appendChild(albumImage);
+
+        // Append the trackDiv to the tracksContainer
+        tracksContainer.appendChild(trackDiv);
+    });
+}
+
 function displayTracks(tracks) {
     const tracksContainer = document.getElementById('tracksContainer');
     tracksContainer.innerHTML = ''; // Clear the tracks container
+
     tracks.forEach((track) => {
         trackInfo = track['track']
         const trackDiv = document.createElement('div');
@@ -161,13 +212,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Will instantly call getplaylist endpoint to grab data
     callApi('/getPlaylists')
         .then(data => {
-            // After it gets data from express server, populate playlist div
+            if(data) {
+                // After it gets data from express server, populate playlist div
             // Add event handler to toggle selection
-            populatePlaylists(data);
-            document.querySelectorAll('.playlist').forEach(playlist => {
-                playlist.addEventListener('click', toggleSelection);
-
-              });
+                populatePlaylists(data);
+                document.querySelectorAll('.playlist').forEach(playlist => {
+                    playlist.addEventListener('click', toggleSelection)
+                });
+            }
         })
         .catch(error => {
             console.error('Error fetching playlists:', error);
@@ -196,7 +248,12 @@ document.getElementById('getTopTracks').addEventListener('click', function() {
         displayTop(data.items)
     }).catch (err => console.log(err))
 });
-
+document.getElementById('logout').addEventListener('click', function() {
+    console.log("yippee")
+    callApi('/logout')
+    window.location.href = "/";
+    console.log("wtf??")
+});
 // small wrapper, idk it's not really necessary
 // good to understand tho
 async function callApi(endpoint) {
@@ -234,60 +291,8 @@ function toggleSelection(event) {
 
 
 
-
-
-
-
-
-
-
-
-// WORKING ON RIGHT NOW //
-
-
-function saveDataAndCreateFaceCards(data) {
-    const tracksContainer = document.getElementById('tracksContainer');
-    tracksContainer.style.visibility = "hidden"
-    tracksContainer.style.display = "none"
-    // Create face cards
-    createFaceCards(data);
-}
-  
-
-function addAnimationAndReplaceFaceCards(clickedCard, tracks) {
-    const container = document.getElementById('facecards-container');
-    const allCards = container.getElementsByClassName('track-facecard');
-    
-    // Add classes for animation
-    for (let card of allCards) {
-      card.classList.add('fade-out');
-      if (card === clickedCard) {
-        card.classList.add('slide-up');
-      } else {
-        card.classList.add('slide-down');
-      }
-    }
-  
-    // Wait for the animation to finish before removing and recreating face cards
-    setTimeout(() => {
-      createFaceCards(tracks);
-    }, 500); // This should be the length of your animation
-}
-
-  // Function to create face cards div
-function createFaceCards(tracks) {
-    console.log(tracks)
-    // Get the container where face cards will be added
-    const container = document.getElementById('facecards-container');
-  
-    // Clear the previous content
-    container.innerHTML = '';
-    tracks.sort(() => Math.random() - 0.5);
-    // Create two new face card divs for the first two tracks
-    tracks.slice(0, 2).forEach((trackdata, index) => {
-    
-        const track = trackdata.track;
-        console.log(track)
+function createTrackComponent(trackdata){
+    const track = trackdata.track;
         const faceCard = document.createElement('div');
         faceCard.className = 'track-facecard';
         const image = document.createElement('img');
@@ -315,13 +320,149 @@ function createFaceCards(tracks) {
         // Append image and trackInfo to faceCard
         faceCard.appendChild(image);
         faceCard.appendChild(trackInfo);
+    
+        // Add click event to refresh both cards
+    
+        // Append the new face card to the container
+        return faceCard;
+}
+
+
+
+
+
+
+// WORKING ON RIGHT NOW //
+
+function startSorting(tracks) {
+  const tracksContainer = document.getElementById('trackContainer');
+  tracksContainer.style.visibility = "hidden"
+  tracksContainer.style.display = "none"
+
+  let state = {
+    items: [],
+    left: [],
+    right: [],
+    merged: [],
+    mergedRunningTotal: 0
+  }
+  let quizCompleted = false;
+
+  tracks = tracks.map(function(item) {
+    return [item];
+  });
+  state.items = tracks.sort(function() {
+    return Math.random() > 0.5 ? 1 : -1;
+  }).reverse();
+
+  console.log(state);
+
+  nextItems(state);
+}
+
+function nextItems(state) {
+    
+    if (!state) {
+        // Swap Cards
+        let temp = state.left;
+        state.left = state.right;
+        state.right = temp;
+    }
+
+    let remaining = state.left.length + state.right.length;
+
+    if (remaining > 0) {
+        if (state.right.length == 0) {
+            while (state.left.length) {
+                state.merged.push(state.left.shift());
+            }
+            state.items.push(state.merged);
+            state.mergedRunningTotal += state.merged.length;
+            nextItems(state);
+            return;
+        } else if (state.left.length == 0) {
+        while (state.right.length) {
+            state.merged.push(state.right.shift());
+        }
+        state.items.push(state.merged);
+        state.mergedRunningTotal += state.merged.length;
+        nextItems(state);
+        return;
+
+        } else {
+        let trackOne = state.left[0];
+        let trackTwo = state.right[0];
+        let trackDuo = [ trackOne, trackTwo ];
+        
+        // Get the container where face cards will be added
+        const container = document.getElementById('facecards-container');
+        
+        // Clear the previous content
+        container.innerHTML = '';
+        
+        // Create two new face card divs for the first two tracks
+        trackDuo.forEach(async (trackdata, index) => {
+            trackComp = createTrackComponent(trackdata)
+            trackComp.onclick = function () {
+                state.numComparisons++
+                selected(state, index);
+            }
+            container.append(trackComp)
+        });
+        }
+    } else {
+    if (state.items.length > 1) {
+      // Initiate sorting
+      state.left = state.items.shift();
+      state.right = state.items.shift();
+      state.merged = [];
+      nextItems(state);
+      return;
+    } else {
+      // Sorting is complete, return the results in rankedTracks
+      let rankedTracks = state.merged.reverse();
+      console.log(rankedTracks)
+      returnResults(rankedTracks);
+    }
+  }
+}
+
+function selected(state, index) {
+    switch (index) {
+      case 0:
+        state.merged.push(state.right.shift());
+        break;
+      case 1:
+        state.merged.push(state.left.shift());
+        break
+    }
   
-      // Add click event to refresh both cards
-      faceCard.onclick = () => {
-        addAnimationAndReplaceFaceCards(faceCard, tracks);
-      };
-  
-      // Append the new face card to the container
-      container.appendChild(faceCard);
-    });
+    nextItems(state);
+}
+
+async function returnResults(tracks) {
+  const facecardsContainer = document.getElementById('facecards-container');
+  facecardsContainer.innerHTML = '';
+
+  // Build string of ranked songs
+  let seedTracks = [];
+  let topTracks = tracks.map(item => item.track);
+  for (let i = 0; i < topTracks.length; i++) {
+    if (seedTracks.length < 5)
+      seedTracks.push(topTracks[i].id);
+  }
+
+  // Build Recommendations
+  let seedTrackString = seedTracks.join(',');
+
+  const response = await fetch(`/getRecommendations?seed_tracks=${seedTrackString}`, {
+    method: 'GET',
+    credentials: 'include' // Needed to send cookies with the request
+  });
+
+  let responseReco = await response.json();
+  let recommendedTracks = responseReco.tracks;
+  displayTop(topTracks)
+  displayRecommendations(recommendedTracks.slice(0, topTracks.length))
+  document.getElementById('trackContainer').style.display = 'flex'
 }

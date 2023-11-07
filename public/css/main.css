@@ -50,13 +50,20 @@ a {
   .button:hover, .track:hover, .playlist:hover {
     transform: scale(1.05);
   }
+
+  #playlistWrapper {
+    padding: 20px 50px 5px;
+  }
+
   /* Style the playlist and track containers */
   #playlistContainer, #tracksContainer {
+    max-width: 150px;
     margin: 20px auto;
-    padding: 20px;
+    padding: 20px 50px 5px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
+
   
   /* Ensure text is readable and not too large */
   #playlistContainer h3,
@@ -68,15 +75,39 @@ a {
   #tracksContainer p {
     font-size: 1rem;
   }
-  
+
   /* This class is applied to each playlist and track */
   .playlist, .track {
     border: 1px solid var(--spotify-dark-gray);
     background-color: var(--spotify-black);
   }
+
+  .selected {
+    border: 2px solid #1DB954; /* Spotify green for selection */
+    background-color: #282828; /* Darker background for contrast */
+  }
+  
+  .playlist {
+    min-width: 150px;
+    max-width: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .playlist h3 {
+    max-width: 150px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .playlist img {
+    align-items: center;
+  }
   
   /* This gives a bit of a gap between your flex items */
   .playlist, .track {
+    align-items: center;
     margin-right: 10px;
   }
   
@@ -146,11 +177,6 @@ a {
   font-size: 0.8rem;
 }
 
-.selected {
-    border: 2px solid #1DB954; /* Spotify green for selection */
-    background-color: #282828; /* Darker background for contrast */
-}
-
 #innerContainer {
     display: flex;
     justify-content: center;
@@ -203,15 +229,16 @@ a {
   padding: 20px;
   overflow: visible;
   display: flex;
+  align-items: stretch;
   justify-content: center;
-  flex-wrap: wrap; /* Allows multiple rows as needed */
+  flex-wrap: nowrap; /* Allows multiple rows as needed */
   gap: 20px; /* Adjust the space between cards */
 }
 
 .track-facecard {
   border: 1px solid #ccc;
   border-radius: 10px;
-  width: 300px; /* Fixed width, you can make this responsive if needed */
+  width: 600px; /* Fixed width, you can make this responsive if needed */
   overflow: hidden; /* Ensures the image does not break the border-radius */
   background: var(--spotify-dark-gray);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -273,4 +300,48 @@ a {
 .track-facecard.fade-out.slide-up,
 .track-facecard.fade-out.slide-down {
   transition: transform 0.5s, opacity 0.5s;
+}
+
+#gameContainer {
+  font-family: 'Arial', sans-serif;
+  background-color: var(--spotify-black); /* Spotify-like dark background */
+  color: #fff;
+  border-radius: 8px; /* rounded corners */
+  padding: 20px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  max-width: 600px; /* Adjust the width as per your design preference */
+  margin: 0 auto;
+}
+
+#trackContainer {
+  margin: 0 auto;
+  max-width: 1500px;
+  align-items: center;
+  display: flex; /* This will align children divs side by side */
+  flex-direction: row;
+  justify-content: space-evenly; /* This will put space between the children divs */
+}
+
+#tracksTop,
+#tracksRecommendation {
+  flex: 1; /* This will allow both divs to share the available space equally */
+  display: flex; /* Makes the child content of each div align vertically */
+  flex-direction: column; /* Aligns the child content vertically */
+  justify-content: flex-start; /* Aligns the child content to the start vertically */
+  align-items: center; /* Aligns the child content in the center horizontally */
+  padding: 10px; /* Optional: Adds some space inside the divs */
+}
+
+#tracksTop {
+  margin-right: 10px; /* Half of the total desired space between the divs */
+}
+
+#tracksRecommendation {
+  margin-left: 10px; /* Half of the total desired space between the divs */
+}
+
+#track-start {
+  align-items: center;
 }
