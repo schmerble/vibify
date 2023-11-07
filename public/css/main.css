@@ -318,7 +318,7 @@ a {
 #trackContainer {
   margin: 0 auto;
   max-width: 1500px;
-  align-items: center;
+  align-items: flex-start;
   display: flex; /* This will align children divs side by side */
   flex-direction: row;
   justify-content: space-evenly; /* This will put space between the children divs */

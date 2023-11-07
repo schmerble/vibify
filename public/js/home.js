@@ -193,10 +193,11 @@ function displayTracks(tracks) {
 }
 
 function createUser(userData) {
+    console.log(userData)
     const userContainer = document.getElementById('userContainer');
     userContainer.innerHTML = `
       <div class="user-profile">
-        <a href= https://open.spotify.com/user/ocr69tzun3gvj2g6c3mx43xl8> <img src="${userData.images[0]?.url || 'default-profile.png'}" alt="Profile Picture" class="profile-pic"/> </a>
+        <a href= ${userData.external_urls.spotify}> <img src="${userData.images[0]?.url || 'default-profile.png'}" alt="Profile Picture" class="profile-pic"/> </a>
         <div class="user-info">
           <h2>${userData.display_name}</h2>
           <p><strong>Email:</strong> ${userData.email}</p>
