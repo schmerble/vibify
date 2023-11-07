@@ -150,3 +150,127 @@ a {
     border: 2px solid #1DB954; /* Spotify green for selection */
     background-color: #282828; /* Darker background for contrast */
 }
+
+#innerContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+
+  }
+#userContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    margin: 10px 10px 10px 10px;
+    background-color: #1DB954;
+    color: white;
+    border-radius: 25px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+  
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+  
+.profile-pic {
+    box-shadow: 9px 9px 8px rgba(0, 0, 0, 0.1);
+    width: 100px; /* You can set the size you want */
+    height: 100px; /* Make sure it's the same as the width to keep the aspect ratio */
+    border-radius: 50%; /* Circular profile pictures */
+    object-fit: cover;
+}
+
+.user-info {
+        text-shadow: 1px 1px 3px #282828;
+}
+  
+.user-info h2 {
+    text-shadow: 1px 1px 3px #282828;
+    margin: 0;
+}
+  
+.user-info p {
+    text-shadow: 1px 1px 3px #282828;
+    margin: 5px 0;
+}
+
+
+#facecards-container {
+  padding: 20px;
+  overflow: visible;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap; /* Allows multiple rows as needed */
+  gap: 20px; /* Adjust the space between cards */
+}
+
+.track-facecard {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  width: 300px; /* Fixed width, you can make this responsive if needed */
+  overflow: hidden; /* Ensures the image does not break the border-radius */
+  background: var(--spotify-dark-gray);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.track-facecard:hover {
+  transform: translateY(-5px); /* Slightly raise the card on hover */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Increase shadow on hover */
+}
+
+.track-facecard img.track-image {
+  width: 100%;
+  height: 300px; /* Fixed height, or 'auto' for variable */
+  object-fit: cover; /* Ensures the image covers the area nicely */
+  transition: opacity 0.3s ease-in-out; /* Smooth transition for image hover */
+}
+
+.track-facecard:hover img.track-image {
+  opacity: 0.9; /* Slight transparency on hover */
+}
+
+.track-facecard .track-info {
+  padding: 15px;
+  text-align: center;
+}
+
+.track-facecard .track-info h3,
+.track-facecard .track-info p,
+.track-facecard .track-info small {
+  margin: 5px
+
+}
+
+.track-facecard {
+  /* ... other styles ... */
+  position: relative; /* Needed for absolute positioning of children */
+  opacity: 1; /* Default opacity */
+  transition: transform 0.5s, opacity 0.5s; /* Animation duration */
+}
+
+/* New classes for animations */
+.fade-out {
+  opacity: 0;
+}
+
+.slide-up {
+  transform: translateY(-100%);
+}
+
+.slide-down {
+  transform: translateY(50%);
+}
+
+.track-facecard.fade-out.slide-up {
+  transition: scale(1.05);
+}
+/* Ensure animations play when classes are added */
+.track-facecard.fade-out.slide-up,
+.track-facecard.fade-out.slide-down {
+  transition: transform 0.5s, opacity 0.5s;
+}

@@ -212,7 +212,7 @@ async function processEndpoint(req, method, ...kwargs) {
  ********************************************************************/
 //
 // getPlayLists endpoint, this is the api url for requesting a user's saved playlists
-app.post('/getPlaylists', async function(req, res) {
+app.get('/getPlaylists', async function(req, res) {
   
   console.log(" ENDPOINT || /getPlayLists")
 
@@ -257,6 +257,33 @@ app.get('/getCurrent', async function(req, res) {
     .then(data => res.status(200).send(data['body']['items']))
   } catch(err) {console.log(err)}
 });
+
+// getSelf endpoint, this is the api url for requesting own user's info.
+app.get('/getSelf', async function(req, res) {
+  console.log(" ENDPOINT || /getSelf")
+  try {
+    processEndpoint(req, 'getMe', [])
+    .then(data => res.status(200).send(data['body']))
+  } catch(err) {console.log(err)}
+})
+
+// getSelf endpoint, this is the api url for requesting own user's top artists
+app.get('/getTopArtists', async function(req, res) {
+  console.log(" ENDPOINT || /getTopArtists")
+  try {
+    processEndpoint(req, 'getMyTopArtists', [])
+    .then(data => res.status(200).send(data['body']))
+  } catch(err) {console.log(err)}
+})
+
+// getTopTracks endpoint, this is the api url for requesting own user's top songs
+app.get('/getTopTracks', async function(req, res) {
+  console.log(" ENDPOINT || /getTopTracks")
+  try {
+    processEndpoint(req, 'getMyTopTracks', [])
+    .then(data => res.status(200).send(data['body']))
+  } catch(err) {console.log(err)}
+})
 
 // getPlaylistTracks endpoint, this is the api url for requesting a playlist's tracks
 app.get('/getPlaylistTracks', async function(req, res){

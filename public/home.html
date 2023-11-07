@@ -7,16 +7,27 @@
 </head>
 <body>
   <!-- THESE BUTTONS DONT WORK BTW LOL, JUST LOAD PLAYLIST DOES-->
-    <button id="getMeButton">Get Me</button>
-    <button id="refreshButton">Refresh</button>
-    <button id="loadTracksButton">Load Playlists</button>
+    <div id= mainContainer>
+        <button id="getMeButton">Get Me</button>
+        <button id="getTopArtists">Top Artists</button>
+        <button id="getTopTracks">Top Tracks</button>
+        <button id="loadTracksButton">Load Playlists</button>
+        <div id=innerContainer>
+            <div id="userContainer" style = "display: flex; overflow-x: auto;"></div>
+        </div>
 
-    <div id="playlistsContainer" style="display: flex; overflow-x: auto;">
+        <!-- User module will be created here dynamically -->
+        </div>
+        <div id="playlistsContainer" style="display: flex; overflow-x: auto;">
         <!-- Playlists will be added here dynamically -->
-      </div>
-    <div id="tracksContainer" style="display: flex; overflow-x: auto;">
+        </div>
+        <div id="tracksContainer" style="display: flex; overflow-x: auto;">
         <!-- Songs will be added here dynamically -->
-      </div>
+        </div>
+
+        <div id="facecards-container"> </div>
+    </div>
+    <br><br>
     <script src="/js/home.js"></script>
 </body>
 </html>
