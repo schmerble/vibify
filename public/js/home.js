@@ -1,5 +1,6 @@
 
 let selectedPlaylistId = null;
+let currentPlayButton = null; // Variable to keep track of the currently playing play button
 
 function populatePlaylists(playlists) {
     const container = document.getElementById('playlistsContainer');
@@ -288,52 +289,85 @@ function toggleSelection(event) {
     } 
 }
 
-
-
-
 function createTrackComponent(trackdata){
-    const track = trackdata.track;
-        const faceCard = document.createElement('div');
-        faceCard.className = 'track-facecard';
-        const image = document.createElement('img');
-        image.src = track.album.images[0].url;
-        image.alt = track.album.name;
-        image.className = 'track-image';
+    const track = trackdata.track; // extracting track specific data from 'trackdata'
+    const faceCard = document.createElement('div'); // Creating div called facecard to hold track specific information
+    faceCard.className = 'track-facecard'; // Let our facecard inherit the CSS styling declared in main.css
+    const image = document.createElement('img'); // Create an img to hold the song cover art 
+    image.src = track.album.images[0].url; // attribute that holds the album cover for the track
+    image.alt = track.album.name; // attribute that holds the name for the 
+    image.className = 'track-image';
         
-        const trackInfo = document.createElement('div');
-        trackInfo.className = 'track-info';
+    const trackInfo = document.createElement('div');
+    trackInfo.className = 'track-info';
         
-        const artistName = document.createElement('h3');
-        artistName.textContent = track.artists.map(artist => artist.name).join(', ');
+    const artistName = document.createElement('h3');
+    artistName.textContent = track.artists.map(artist => artist.name).join(', ');
 
-        const songName = document.createElement('p');
-        songName.textContent = track.name;
+    const songName = document.createElement('p');
+    songName.textContent = track.name;
 
-        const albumName = document.createElement('small');
-        albumName.textContent = track.album.name;
+    const albumName = document.createElement('small');
+    albumName.textContent = track.album.name;
 
-        // Append elements to trackInfo
-        trackInfo.appendChild(artistName);
-        trackInfo.appendChild(songName);
-        trackInfo.appendChild(albumName);
+    const playButton = document.createElement('button');
+    playButton.textContent = '▶';
+    playButton.className = 'play-button';
+
+    const playButtonDiv = document.createElement('div');
+    playButtonDiv.appendChild(playButton);
+
+    let audio = document.getElementById("myAudio");
+
+     // Toggle between play and pause on button click
+    playButton.addEventListener('click', (event) => {      
+      event.stopPropagation();//ensures the track card won't get clicked and generate two different track cards when the play button is clicked
+      
+      // audio stream is initialized and its not paused, so pause the audio
+      if (audio && !audio.paused) {
+          audio.pause();
+          if (currentPlayButton) {
+            currentPlayButton.textContent = '▶'; // Change it back to the play symbol
+        }
+      } else { // audio stream is initialized and is paused, so play the audio
+          if (audio) audio.pause(); // Pause any currently playing audio
+          audio = new Audio(track.preview_url); // get an audio preview of the track
+          audio.play(); // 
+          playButton.textContent = '| |'; // change playButton to contain text symbolizing pause button
+          currentPlayButton = playButton; // keep track of the playButton that is currently active
+
+          setTimeout(() => { // Stop playing after 30 seconds
+              audio.pause();
+              playButton.textContent = '▶';
+          }, 30000);
+      }
+  });
+
+    // Append elements to trackInfo
+    trackInfo.appendChild(artistName);
+    trackInfo.appendChild(songName);
+    trackInfo.appendChild(albumName);
+    trackInfo.appendChild(playButtonDiv);
         
-        // Append image and trackInfo to faceCard
-        faceCard.appendChild(image);
-        faceCard.appendChild(trackInfo);
+    // Append image and trackInfo to faceCard
+    faceCard.appendChild(image);
+    faceCard.appendChild(trackInfo);
+
+    // FaceCard click event that should cut audio channels for both track cards when clicked. Currently doesn't work when audio from one track is playing and the other track card is clicked.
+    faceCard.addEventListener('click', () => {
+    if (audio && !audio.paused) {
+        audio.pause(); // pause audio channels
+        if (currentPlayButton) {
+            currentPlayButton.textContent = '▶'; // Change it back to the play symbol
+        }
+      }
+  });
     
-        // Add click event to refresh both cards
-    
-        // Append the new face card to the container
-        return faceCard;
-}
-
-
-
-
-
+    // Append the new face card to the container
+    return faceCard; 
+ } 
 
 // WORKING ON RIGHT NOW //
-
 function startSorting(tracks) {
   const tracksContainer = document.getElementById('trackContainer');
   tracksContainer.style.visibility = "hidden"
