@@ -7,7 +7,7 @@ function populatePlaylists(playlists) {
     container.innerHTML = ''; // Clear previous content
   
     playlists.forEach(playlist => {
-      // Create elements for each playlist
+      // Create elements fonode r each playlist
       const playlistDiv = document.createElement('div');
       playlistDiv.classList.add('playlist');
       playlistDiv.style.margin = '10px';
@@ -94,10 +94,40 @@ function displayTop(tracks) {
         const trackArtists = document.createElement('p');
         trackArtists.textContent = trackInfo.artists.map(artist => artist.name).join(', ');
     
-        const trackLink = document.createElement('a');
-        trackLink.href = trackInfo.external_urls.spotify; // Link to the track on Spotify
-        trackLink.textContent = 'Listen on Spotify';
-        trackLink.target = '_blank'; // Opens the link in a new tab/window
+        // const trackLink = document.createElement('a');
+        // trackLink.href = trackInfo.external_urls.spotify; // Link to the track on Spotify
+        // trackLink.textContent = 'Listen on Spotify';
+        // trackLink.target = '_blank'; // Opens the link in a new tab/window
+
+        const playButton = document.createElement('button');
+        playButton.textContent = '▶';
+        playButton.className = 'play-button';
+
+        let audio = document.getElementById("myAudio");
+
+       // Toggle between play and pause on button click
+      playButton.addEventListener('click', (event) => {      
+      event.stopPropagation();//ensures the track card won't get clicked and generate two different track cards when the play button is clicked
+      
+      // audio stream is initialized and its not paused, so pause the audio
+      if (audio && !audio.paused) {
+          audio.pause();
+          if (currentPlayButton) {
+            currentPlayButton.textContent = '▶'; // Change it back to the play symbol
+        }
+      } else { // audio stream is initialized and is paused, so play the audio
+          if (audio) audio.pause(); // Pause any currently playing audio
+          audio = new Audio(trackInfo.preview_url); // get an audio preview of the track
+          audio.play(); // 
+          playButton.textContent = '| |'; // change playButton to contain text symbolizing pause button
+          currentPlayButton = playButton; // keep track of the playButton that is currently active
+
+          setTimeout(() => { // Stop playing after 30 seconds
+              audio.pause();
+              playButton.textContent = '▶';
+          }, 30000);
+      }
+  });
     
         const albumImage = new Image();
         albumImage.src = trackInfo.album.images[0].url; // The URL to the album cover image
@@ -105,7 +135,7 @@ function displayTop(tracks) {
         // Append the new elements to the trackDiv
         trackDiv.appendChild(trackName);
         trackDiv.appendChild(trackArtists);
-        trackDiv.appendChild(trackLink);
+        trackDiv.appendChild(playButton);
         trackDiv.appendChild(albumImage);
 
         // Append the trackDiv to the tracksContainer
@@ -140,10 +170,35 @@ function displayRecommendations(tracks) {
         const trackArtists = document.createElement('p');
         trackArtists.textContent = trackInfo.artists.map(artist => artist.name).join(', ');
     
-        const trackLink = document.createElement('a');
-        trackLink.href = trackInfo.external_urls.spotify; // Link to the track on Spotify
-        trackLink.textContent = 'Listen on Spotify';
-        trackLink.target = '_blank'; // Opens the link in a new tab/window
+        const playButton = document.createElement('button');
+        playButton.textContent = '▶';
+        playButton.className = 'play-button';
+
+        let audio = document.getElementById("myAudio");
+
+
+        playButton.addEventListener('click', (event) => {      
+          event.stopPropagation();//ensures the track card won't get clicked and generate two different track cards when the play button is clicked
+          
+          // audio stream is initialized and its not paused, so pause the audio
+          if (audio && !audio.paused) {
+              audio.pause();
+              if (currentPlayButton) {
+                currentPlayButton.textContent = '▶'; // Change it back to the play symbol
+            }
+          } else { // audio stream is initialized and is paused, so play the audio
+              if (audio) audio.pause(); // Pause any currently playing audio
+              audio = new Audio(trackInfo.preview_url); // get an audio preview of the track
+              audio.play(); // 
+              playButton.textContent = '| |'; // change playButton to contain text symbolizing pause button
+              currentPlayButton = playButton; // keep track of the playButton that is currently active
+    
+              setTimeout(() => { // Stop playing after 30 seconds
+                  audio.pause();
+                  playButton.textContent = '▶';
+              }, 30000);
+          }
+      });
     
         const albumImage = new Image();
         albumImage.src = trackInfo.album.images[0].url; // The URL to the album cover image
@@ -151,7 +206,7 @@ function displayRecommendations(tracks) {
         // Append the new elements to the trackDiv
         trackDiv.appendChild(trackName);
         trackDiv.appendChild(trackArtists);
-        trackDiv.appendChild(trackLink);
+        trackDiv.appendChild(playButton);
         trackDiv.appendChild(albumImage);
 
         // Append the trackDiv to the tracksContainer
@@ -174,10 +229,17 @@ function displayTracks(tracks) {
         const trackArtists = document.createElement('p');
         trackArtists.textContent = trackInfo.artists.map(artist => artist.name).join(', ');
     
-        const trackLink = document.createElement('a');
-        trackLink.href = trackInfo.external_urls.spotify; // Link to the track on Spotify
-        trackLink.textContent = 'Listen on Spotify';
-        trackLink.target = '_blank'; // Opens the link in a new tab/window
+        // const trackLink = document.createElement('a');
+        // trackLink.href = trackInfo.external_urls.spotify; // Link to the track on Spotify
+        // trackLink.textContent = 'Listen on Spotify';
+        // trackLink.target = '_blank'; // Opens the link in a new tab/window
+
+        const playButton = document.createElement('a');
+        playButton.textContent = '▶';
+        playButton.className = 'play-button';
+
+        // const playButtonDiv = document.createElement('div');
+        // playButtonDiv.appendChild(playButton);
     
         const albumImage = new Image();
         albumImage.src = trackInfo.album.images[0].url; // The URL to the album cover image
@@ -185,7 +247,7 @@ function displayTracks(tracks) {
         // Append the new elements to the trackDiv
         trackDiv.appendChild(trackName);
         trackDiv.appendChild(trackArtists);
-        trackDiv.appendChild(trackLink);
+        trackDiv.appendChild(playButton);
         trackDiv.appendChild(albumImage);
 
         // Append the trackDiv to the tracksContainer
@@ -438,8 +500,9 @@ function nextItems(state) {
         trackDuo.forEach(async (trackdata, index) => {
             trackComp = createTrackComponent(trackdata)
             trackComp.onclick = function () {
-                state.numComparisons++
+                state.numComparisons++;
                 selected(state, index);
+                
             }
             container.append(trackComp)
         });

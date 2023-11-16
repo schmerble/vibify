@@ -23,7 +23,11 @@ a {
     text-decoration: underline;
   }
   
-  h1, h2, h3, h4, h5, h6 {
+  h1, h2, h4, h5, h6 {
+    color: var(--spotify-dark-gray);
+  }
+
+  h3 {
     color: var(--spotify-white);
   }
   
@@ -114,7 +118,7 @@ a {
   /* Additional global styling */
   button {
     background-color: var(--spotify-green);
-    color: var(--spotify-white);
+    color: var(--spotify-dark-gray);
     border: none;
     padding: 10px 20px;
     border-radius: 20px;
@@ -191,7 +195,7 @@ a {
     padding: 20px;
     margin: 10px 10px 10px 10px;
     background-color: #1DB954;
-    color: white;
+    color: var(--spotify-dark-gray);
     border-radius: 25px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -201,6 +205,8 @@ a {
     align-items: center;
     gap: 20px;
 }
+
+
   
 .profile-pic {
     box-shadow: 9px 9px 8px rgba(0, 0, 0, 0.1);
@@ -208,6 +214,10 @@ a {
     height: 100px; /* Make sure it's the same as the width to keep the aspect ratio */
     border-radius: 50%; /* Circular profile pictures */
     object-fit: cover;
+}
+
+.profile-pic:hover {
+  transform: scale(1.1);
 }
 
 .user-info {
