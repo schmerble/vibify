@@ -87,7 +87,6 @@ a {
   }
 
   .selected {
-    border: 2px solid #1DB954; /* Spotify green for selection */
     background-color: #282828; /* Darker background for contrast */
   }
   
@@ -117,8 +116,8 @@ a {
   
   /* Additional global styling */
   button {
-    background-color: var(--spotify-green);
-    color: var(--spotify-dark-gray);
+    background-color: var(--spotify-dark-gray);
+    color: var(--spotify-white);
     border: none;
     padding: 10px 20px;
     border-radius: 20px;
@@ -126,8 +125,23 @@ a {
   }
   
   button:hover {
-    background-color: #17e650; /* A lighter green */
+    background-color: #2e312f; /* A lighter gray */
+  }
+
+button.play-button{
+  background-color: var(--spotify-green);
+  color: var(--spotify-dark-gray);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
 }
+
+button.play-button:hover{
+  background-color: #17e650; /* A lighter green */
+}
+
+
 #tracksContainer {
   overflow-x: hidden;
   display: flex;
@@ -194,8 +208,8 @@ a {
     align-items: center;
     padding: 20px;
     margin: 10px 10px 10px 10px;
-    background-color: #1DB954;
-    color: var(--spotify-dark-gray);
+    background-color: var(--spotify-dark-gray);    
+    color: var(--spotify-white);
     border-radius: 25px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -221,16 +235,17 @@ a {
 }
 
 .user-info {
-        text-shadow: 1px 1px 3px #282828;
+        /* text-shadow: 1px 1px 3px #282828; */
 }
   
 .user-info h2 {
-    text-shadow: 1px 1px 3px #282828;
+    /* text-shadow: 1px 1px 3px #282828; */
+    color: var(--spotify-white);
     margin: 0;
 }
   
 .user-info p {
-    text-shadow: 1px 1px 3px #282828;
+    /* text-shadow: 1px 1px 3px #282828; */
     margin: 5px 0;
 }
 

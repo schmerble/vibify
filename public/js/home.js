@@ -128,6 +128,11 @@ function displayTop(tracks) {
           }, 30000);
       }
   });
+
+  trackDiv.addEventListener('click', () => {
+    // Assuming trackInfo.external_urls.spotify contains the Spotify track URL
+    window.open(trackInfo.external_urls.spotify, '_blank');
+});
     
         const albumImage = new Image();
         albumImage.src = trackInfo.album.images[0].url; // The URL to the album cover image
@@ -150,7 +155,6 @@ function displayRecommendations(tracks) {
     tracksContainer.style.display = 'inherit'
     tracksContainer.innerHTML = ''; // Clear the tracks container
 
-
     const startDiv = document.createElement('div');
     startDiv.classList.add('track-start');
     const startText = document.createElement('h3');
@@ -162,7 +166,6 @@ function displayRecommendations(tracks) {
         index++;
         const trackDiv = document.createElement('div');
         trackDiv.classList.add('track');
-        
     
         const trackName = document.createElement('h3');
         trackName.textContent = index + ". " + trackInfo.name;
@@ -199,6 +202,11 @@ function displayRecommendations(tracks) {
               }, 30000);
           }
       });
+
+      trackDiv.addEventListener('click', () => {
+        // Assuming trackInfo.external_urls.spotify contains the Spotify track URL
+        window.open(trackInfo.external_urls.spotify, '_blank');
+    });
     
         const albumImage = new Image();
         albumImage.src = trackInfo.album.images[0].url; // The URL to the album cover image
