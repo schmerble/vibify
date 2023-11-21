@@ -44,7 +44,7 @@ body {
     display: inline-block;
     padding: 10px 30px;
     background-color: #1DB954; /* Spotify brand color */
-    color: #ffffff;
+    color: var(--spotify-dark-gray);
     font-weight: bold;
     text-decoration: none;
     border-radius: 30px; /* Rounded corners */
@@ -54,7 +54,7 @@ body {
 .login-button:hover, .login-button:focus {
     background-color: #1ed760; /* Slightly lighter green on hover/focus */
     text-decoration: none; /* No underline on hover/focus */
-    color: white;
+    color: var(--spotify-dark-gray);
 }
 
 /* Adjust the hero title size on smaller screens */
