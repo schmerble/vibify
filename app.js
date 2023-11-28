@@ -96,8 +96,7 @@ async function makeSpotifyApiCall(spotifyApi, method, client, userId, argsArray)
       spotifyRefreshToken: newTokens.body['refresh_token'],
       expires_in: calculateExpiryTime(newTokens.body['expires_in'])
     });
-    client.setAccessToken(newTokens.body['access_token'])
-    client.setRefreshToken(newTokens.body['refresh_token'])
+    spotifyApi.setRefreshToken(newTokens.body['refresh_token'])
   }
 
   if (typeof spotifyApi[method] === 'function') {
@@ -179,7 +178,7 @@ app.get('/redirect', function(req, res) {
         res.redirect('/home.html');
         })
       }
-  });
+});
 
 // Wrapper function made to process endpoints, don't touch this unless you need a foundational change
 // Which I don't think is necessary(?), not sure tbh.
@@ -191,7 +190,7 @@ async function processEndpoint(req, method, ...kwargs) {
     const jwtContent = jwt.verify(jwtCookie, key);
 
     // Instantiate spotifyApiClient
-    const spotifyClient = new spotifyAPI(credentials)
+    let spotifyClient = await new spotifyAPI(credentials)
 
     // Look for specific clientId in mongoDB Atlas database (This command holds until we have the data)
     client = await findUser(jwtContent['userId']);
@@ -218,7 +217,7 @@ app.get('/getPlaylists', async function(req, res) {
 
   try {  
     processEndpoint(req, 'getUserPlaylists', [])
-    .then(data => res.status(200).send(data['body']['items']))
+    .then(data => res.status(200).send(data.body.items))
   } catch(err) {console.log(err)}
 });
 
@@ -227,7 +226,7 @@ app.get('/getRecent', async function(req, res) {
   console.log(" ENDPOINT || /getRecent")
   try {  
     processEndpoint(req, 'getMyRecentlyPlayedTracks', [])
-    .then(data => res.status(200).send(data['body']['items']))
+    .then(data => res.status(200).send(data.body.items))
   } catch(err) {console.log(err)}
 });
 
@@ -235,10 +234,9 @@ app.get('/getRecent', async function(req, res) {
 app.get('/getRecommendations', async function(req, res) {
   console.log(" ENDPOINT || /getRecommendations")
   const seed_tracks = req.query.seed_tracks;
-  console.log("huhu", seed_tracks);
   try {
     processEndpoint(req, 'getRecommendations', [{ seed_tracks: seed_tracks }])
-    .then(data => res.status(200).send(data['body']))
+    .then(data => res.status(200).send(data.body))
   } catch(err) {console.log(err)}
 });
 
@@ -253,7 +251,11 @@ app.get('/getCurrent', async function(req, res) {
   console.log(" ENDPOINT || /getRecent")
   try {  
     processEndpoint(req, 'getMyCurrentPlayingTrack', [])
-    .then(data => res.status(200).send(data['body']['items']))
+    .then(data => res.status(200).send(data.body.items))
+    .catch(err => {
+      console.error(err);
+      res.status(500).send('An error occurred');
+    });
   } catch(err) {console.log(err)}
 });
 
@@ -262,7 +264,11 @@ app.get('/getSelf', async function(req, res) {
   console.log(" ENDPOINT || /getSelf")
   try {
     processEndpoint(req, 'getMe', [])
-    .then(data => res.status(200).send(data['body']))
+    .then(data => res.status(200).send(data.body))
+    .catch(err => {
+      console.error(err);
+      res.status(500).send('An error occurred');
+    });
   } catch(err) {console.log(err)}
 })
 
@@ -271,7 +277,11 @@ app.get('/getTopArtists', async function(req, res) {
   console.log(" ENDPOINT || /getTopArtists")
   try {
     processEndpoint(req, 'getMyTopArtists', [])
-    .then(data => res.status(200).send(data['body']))
+    .then(data => res.status(200).send(data.body))
+    .catch(err => {
+      console.error(err);
+      res.status(500).send('An error occurred');
+    });
   } catch(err) {console.log(err)}
 })
 
@@ -280,7 +290,11 @@ app.get('/getTopTracks', async function(req, res) {
   console.log(" ENDPOINT || /getTopTracks")
   try {
     processEndpoint(req, 'getMyTopTracks', [])
-    .then(data => res.status(200).send(data['body']))
+    .then(data => res.status(200).send(data.body))
+    .catch(err => {
+      console.error(err);
+      res.status(500).send('An error occurred');
+    });
   } catch(err) {console.log(err)}
 })
 
@@ -292,7 +306,7 @@ app.get('/getPlaylistTracks', async function(req, res){
 
   try {  
     processEndpoint(req, 'getPlaylistTracks',[playlistId])
-    .then(data => res.status(200).send(data['body']['items']))
+    .then(data => res.status(200).send(data.body.items))
   } catch(err) {console.log(err)}
 });
 

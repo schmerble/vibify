@@ -1,13 +1,15 @@
 
 let selectedPlaylistId = null;
 let currentPlayButton = null; // Variable to keep track of the currently playing play button
+let playListData = [];
+let userID = null;
+let maxNumTracks = 1;
 
 function populatePlaylists(playlists) {
     const container = document.getElementById('playlistsContainer');
     container.innerHTML = ''; // Clear previous content
-  
     playlists.forEach(playlist => {
-      // Create elements fonode r each playlist
+      // Create element node for each playlist
       const playlistDiv = document.createElement('div');
       playlistDiv.classList.add('playlist');
       playlistDiv.style.margin = '10px';
@@ -50,6 +52,22 @@ function populatePlaylists(playlists) {
   
       // Append the playlist div to the container
       container.appendChild(playlistDiv);
+      if(playlist.tracks.total > maxNumTracks) {
+        console.log("true", playlist.tracks.total);
+        maxNumTracks = playlist.tracks.total;
+        console.log("sanity check", maxNumTracks);
+
+      }
+      playListData.push(
+        {
+        'title': playlist.name,
+        'numTracks': playlist.tracks.total,
+        'madeBy': playlist.owner.id === userID ? true : false,
+        'public': playlist.public,
+        'collaborative': playlist.collaborative,
+        'object': playlistDiv
+        }
+      );
     });
 }
 
@@ -62,6 +80,7 @@ async function loadPlaylistTracks(playlistId) {
         const tracks = await response.json();
         //displayTracks(tracks)
         startSorting(tracks);
+        scrollToBottomOfWindow();
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
     }
@@ -69,9 +88,14 @@ async function loadPlaylistTracks(playlistId) {
 
 
 function displayTop(tracks) {
+    const gameContainer = document.getElementById('gameContainer')
+    gameContainer.style.display = "none";
+    const trackWrapper = document.getElementById('trackContainer');
+    trackWrapper.style.visibility = 'visible';
+    trackWrapper.style.display = 'flex';
     const tracksContainer = document.getElementById('tracksTop');
     tracksContainer.style.visibility = 'visible'
-    tracksContainer.style.display = 'inherit'
+    tracksContainer.style.display = 'flex'
     
     tracksContainer.innerHTML = ''; // Clear the tracks container
 
@@ -148,11 +172,10 @@ function displayTop(tracks) {
     });
 }
 
-
 function displayRecommendations(tracks) {
     const tracksContainer = document.getElementById('tracksRecommendation');
     tracksContainer.style.visibility = 'visible'
-    tracksContainer.style.display = 'inherit'
+    tracksContainer.style.display = 'flex'
     tracksContainer.innerHTML = ''; // Clear the tracks container
 
     const startDiv = document.createElement('div');
@@ -263,25 +286,31 @@ function displayTracks(tracks) {
     });
 }
 
+
+
 function createUser(userData) {
     console.log(userData)
-    const userContainer = document.getElementById('userContainer');
-    userContainer.innerHTML = `
-      <div class="user-profile">
-        <a href= ${userData.external_urls.spotify}> <img src="${userData.images[0]?.url || 'default-profile.png'}" alt="Profile Picture" class="profile-pic"/> </a>
-        <div class="user-info">
-          <h2>${userData.display_name}</h2>
-          <p><strong>Email:</strong> ${userData.email}</p>
-          <p><strong>Followers:</strong> ${userData.followers.total}</p>
-          <p><strong>Account Type:</strong> ${userData.product}</p>
-        </div>
-      </div>
-    `;
+    const iconDiv = document.getElementById('icon');
+    const email = document.getElementById('email');
+    const name = document.getElementById('name');
+    const followers = document.getElementById('followers');
+    const type = document.getElementById('type');
+    const imageUrl = userData.images && userData.images[0] ? userData.images[0].url : 'default-profile.png';
+    iconDiv.innerHTML = `<img src="${imageUrl}" alt="Profile Picture" class="profile-pic" id='icon'/>`;
+    name.innerHTML = "<h2 id='name'>" +  userData.display_name + "</h2>";
+    followers.innerHTML = "<p id='followers'> Followers: " +  userData.followers.total + "</strong></p>";
+    type.innerHTML = "<p id='type'> Type: " +  userData.product + "</strong></p>";
+    email.innerHTML = "Email: <strong>" + userData.email + "</strong>";
+
+    userID = userData.id;
   }
 
 // This is stuff that will happen when the page finishes loading
 document.addEventListener('DOMContentLoaded', function() {
     // Will instantly call getplaylist endpoint to grab data
+    callApi('/getSelf').then(data => {
+      createUser(data)
+    })
     callApi('/getPlaylists')
         .then(data => {
             if(data) {
@@ -290,20 +319,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 populatePlaylists(data);
                 document.querySelectorAll('.playlist').forEach(playlist => {
                     playlist.addEventListener('click', toggleSelection)
-                });
+                })
+                updateFilters();
             }
         })
         .catch(error => {
             console.error('Error fetching playlists:', error);
         });
-    callApi('/getSelf').then(data => {
-        createUser(data)
-    })
 });
 
 // uhhh, doesn't do anything, it's meant to get profile information
 document.getElementById('getMeButton').addEventListener('click', function() {
     callApi('/getSelf').then(data => console.log(data))
+});
+
+function printData(item) {
+  console.log(item);
+};
+
+document.getElementById('debug').addEventListener('click', function() {
+  playListData.forEach(printData)
 });
 
 // deprecated function
@@ -443,6 +478,9 @@ function startSorting(tracks) {
   const tracksContainer = document.getElementById('trackContainer');
   tracksContainer.style.visibility = "hidden"
   tracksContainer.style.display = "none"
+  const gameContainer = document.getElementById("gameContainer");
+  gameContainer.style.visibility = "visible";
+  gameContainer.style.display = "flex";
 
   let state = {
     items: [],
@@ -571,4 +609,141 @@ async function returnResults(tracks) {
   displayTop(topTracks)
   displayRecommendations(recommendedTracks.slice(0, topTracks.length))
   document.getElementById('trackContainer').style.display = 'flex'
+}
+
+
+
+document.getElementById('filters').addEventListener('click', function() {
+  console.log("click!")
+  const filterMenu = document.getElementById('filterMenu');
+  if (filterMenu.classList.contains('hidden')) {
+    filterMenu.classList.remove('hidden');
+    filterMenu.classList.add('visible');
+    this.innerHTML = "&#11165;"
+  } else {
+    
+    filterMenu.classList.remove('visible');
+    filterMenu.classList.add('hidden');
+    this.innerHTML = "&#11167;"
+  }
+});
+
+
+// DO NOT TOUCH THIS, THIS SHIT DROVE ME CRAZY FUCK
+
+
+const ownerCheck = document.getElementById('ownerCheck');
+const collabCheck = document.getElementById('collabCheck');
+const publicCheck = document.getElementById('publicCheck');
+
+// Checkbox stuff ugh.
+const checkboxes = document.querySelectorAll('.checkContainer input[type="checkbox"]');
+checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            this.parentNode.classList.add('checked');
+        } else {
+            this.parentNode.classList.remove('checked');
+        }
+    });
+  
+});
+
+document.getElementById('searchInput').addEventListener('input', function(e) {
+  const searchTerm = e.target.value.toLowerCase();
+  playListData.forEach(playlist => {
+      const title = playlist.title.toLowerCase();
+      if (title.includes(searchTerm)) {
+          playlist.object.classList.remove('hidden');
+          playlist.object.style.display = 'block'; // Reset to default or 'block'
+      } else {
+          if (!playlist.object.classList.contains('hidden')) {
+              playlist.object.classList.add('hidden');
+              playlist.object.addEventListener('transitionend', function() {
+                  // Only set display to none after the fade out
+                  if (playlist.object.classList.contains('hidden')) {
+                      playlist.object.style.display = 'none';
+                  }
+              }, { once: true }); // Ensure the listener is called only once
+          }
+      }
+  });
+});
+
+function filterPlaylists() {
+  const filterByOwner = ownerCheck.checked;
+  const filterByCollab = collabCheck.checked;
+  const filterByPublic = publicCheck.checked;
+
+  playListData.forEach(playlist => {
+      // Determine if the playlist should be shown based on the filters
+
+      const showPlaylist = (!filterByOwner || playlist.madeBy) && // Show if 'By you' is not checked or if the playlist is made by the user
+                           (!filterByCollab || playlist.collaborative) && // Show if 'Collaborative' is not checked or if the playlist is collaborative
+                           (!filterByPublic || playlist.public); // Show if 'Public' is not checked or if the playlist is public
+      if (showPlaylist) {
+          playlist.object.classList.remove('hidden');
+          playlist.object.style.display = ''; // Reset to default or 'block'
+
+      } else {
+          playlist.object.classList.add('hidden');
+          playlist.object.addEventListener('transitionend', function() {
+              if (playlist.object.classList.contains('hidden')) {
+                  playlist.object.style.display = 'none';
+              }
+          }, { once: true });
+      }
+  });
+}
+
+
+ownerCheck.addEventListener('change', filterPlaylists);
+collabCheck.addEventListener('change', filterPlaylists);
+publicCheck.addEventListener('change', filterPlaylists);
+
+
+
+function scrollToBottomOfWindow() {
+  window.scrollTo(0, document.body.scrollHeight);
+}
+
+
+
+var maxTrackSpan = document.getElementById('maxTrackSpan');
+var trackRange = document.getElementById('trackRange');
+trackRange.addEventListener('input', function() {
+  // Update the span's text with the slider's current value
+  maxTrackSpan.textContent = 'Max Tracks: ' + this.value;
+  playListData.forEach(playlist => {
+    if (playlist.numTracks <= this.value) {
+        playlist.object.classList.remove('hidden');
+        playlist.object.style.display = 'flex'; // Reset to default or 'block'
+    } else {
+        if (!playlist.object.classList.contains('hidden')) {
+            playlist.object.classList.add('hidden');
+            playlist.object.addEventListener('transitionend', function() {
+                // Only set display to none after the fade out
+                if (playlist.object.classList.contains('hidden')) {
+                    playlist.object.style.display = 'none';
+                }
+            }, { once: true }); // Ensure the listener is called only once
+        }
+    }
+  });
+});
+
+
+
+function updateFilters() {
+  console.log("called");
+  var trackRange = document.getElementById('trackRange');
+  trackRange.max = maxNumTracks;
+}
+
+
+
+function toggleMenu() {
+  console.log('click');
+  var menu = document.getElementById("profileMenu");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
 }

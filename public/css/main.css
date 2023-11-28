@@ -1,133 +1,195 @@
 :root {
-    --spotify-black: #191414;
-    --spotify-dark-gray: #282828;
-    --spotify-light-gray: #b3b3b3;
-    --spotify-green: #1DB954;
-    --spotify-white: #ffffff;
+  --spotify-black: #191414;
+  --spotify-dark-gray: #282828;
+  --spotify-light-gray: #b3b3b3;
+  --spotify-green: #1DB954;
+  --spotify-white: #ffffff;
 }
-  
 body {
-    background-color: var(--spotify-black);
-    color: var(--spotify-light-gray);
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  
+  background-color: var(--spotify-black);
+  color: var(--spotify-light-gray);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
-  
+ 
+
+#searchBar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+input#searchInput {
+  border: none;
+  border-radius: 25px;
+  width: 50%;
+  height: 80px;
+  text-align: center;
+  font-size: 35px;
+  background-color: var(--spotify-black);
+  color:white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+#searchBar input:focus {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  background-color: var(--spotify-dark-gray);
+  border: solid 1px var(--spotify-green);
+  transition: transform 0.5s ease-in-out, box-shadow 0.1s ease-in-out, background-color 0.5s ease-in-out;
+}
+
+#filters {
+  font-size: 25px;
+  margin-left: 15px;
+}
+
+
+#filterMenu {
+  align-items: center;
+  justify-items: center;
+  flex-direction: column;
+  flex-wrap: wrap;
+  margin: 20px;
+  gap: 15px;
+  width: 60%;
+  background-color: var(--spotify-black);
+}
+
+
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: flex;
+}
+
+
+
 a {
-    color: var(--spotify-green);
-    text-decoration: none;
+  color: var(--spotify-green);
+  text-decoration: none;
 }
-  
-  a:hover,
-  a:focus {
-    text-decoration: underline;
-  }
-  
-  h1, h2, h4, h5, h6 {
-    color: var(--spotify-dark-gray);
-  }
+a:hover, a:focus {
+  text-decoration: underline;
+}
+h1, h2, h4, h5, h6 {
+  color: var(--spotify-dark-gray);
+}
+h3 {
+  color: var(--spotify-white);
+}
+.track {
+  background-color: var(--spotify-dark-gray);
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+.track h3 {
+  color: var(--spotify-white);
+}
+.track p {
+  color: var(--spotify-light-gray);
+}
+/* Add hover effect for interactive elements */
+.button, .track, .playlist {
+  transition: transform 0.3s ease-in-out;
+}
+.button:hover, .track:hover, .playlist:hover {
+  transform: scale(1.05);
+}
 
-  h3 {
-    color: var(--spotify-white);
-  }
-  
-  .track {
-    background-color: var(--spotify-dark-gray);
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-  }
-  
-  .track h3 {
-    color: var(--spotify-white);
-  }
-  
-  .track p {
-    color: var(--spotify-light-gray);
-  }
-  
-  /* Add hover effect for interactive elements */
-  .button, .track, .playlist {
-    transition: transform 0.3s ease;
-  }
-  
-  .button:hover, .track:hover, .playlist:hover {
-    transform: scale(1.05);
-  }
 
-  #playlistWrapper {
-    padding: 20px 50px 5px;
-  }
+#playlistWrapper {
+  display: flex;
+  overflow-x: visible;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  margin: auto;
+}
 
-  /* Style the playlist and track containers */
-  #playlistContainer, #tracksContainer {
-    max-width: 150px;
-    margin: 20px auto;
-    padding: 20px 50px 5px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
+#playlistsContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap; /* Prevents the items from wrapping */
+  overflow-x: scroll; /* Enables horizontal scrolling */
+  width: 100%;
+  min-width: 80%;
+  height: 100%;
+}
 
-  
-  /* Ensure text is readable and not too large */
-  #playlistContainer h3,
-  #tracksContainer h3 {
-    font-size: 1.2rem;
-  }
-  
-  #playlistContainer p,
-  #tracksContainer p {
-    font-size: 1rem;
-  }
+/* Style the playlist and track containers */
+#tracksContainer {
+  max-width: 150px;
+  margin: 20px auto;
+  padding: 20px 50px 5px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+/* Ensure text is readable and not too large */
+#tracksContainer h3 {
+  font-size: 1.2rem;
+}
+#tracksContainer p {
+  font-size: 1rem;
+}
+/* This class is applied to each playlist and track */
+.playlist, .track {
+  overflow: hidden;
+  border: 1px solid var(--spotify-dark-gray);
+  background-color: var(--spotify-black);
+}
+.selected {
+  background-color: #282828;
+ /* Darker background for contrast */
+}
+.playlist {
+  min-width: 150px;
+  max-width: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 1; /* Fully visible by default */
+  visibility: visible;
+  transition: opacity 0.5s, visibility 0.5s; /* Adjust time as needed */
+}
 
-  /* This class is applied to each playlist and track */
-  .playlist, .track {
-    border: 1px solid var(--spotify-dark-gray);
-    background-color: var(--spotify-black);
-  }
+.playlist.hidden {
+  opacity: 0; /* Fully transparent */
+  transition: opacity 0.5s, visibility 0s linear 0.5s; /* Hide after 0.5s */
+}
 
-  .selected {
-    background-color: #282828; /* Darker background for contrast */
-  }
-  
-  .playlist {
-    min-width: 150px;
-    max-width: 150px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .playlist h3 {
-    max-width: 150px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  .playlist img {
-    align-items: center;
-  }
-  
-  /* This gives a bit of a gap between your flex items */
-  .playlist, .track {
-    align-items: center;
-    margin-right: 10px;
-  }
-  
-  /* Additional global styling */
-  button {
-    background-color: var(--spotify-dark-gray);
-    color: var(--spotify-white);
-    border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #2e312f; /* A lighter gray */
-  }
-
+.playlist h3 {
+  max-width: 150px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.playlist img {
+  align-items: center;
+}
+/* This gives a bit of a gap between your flex items */
+.playlist, .track {
+  align-items: center;
+  margin-right: 10px;
+}
+/* Additional global styling */
+button {
+  background-color: var(--spotify-dark-gray);
+  color: var(--spotify-white);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #2e312f;
+ /* A lighter gray */
+}
 button.play-button{
   background-color: var(--spotify-green);
   color: var(--spotify-dark-gray);
@@ -136,237 +198,334 @@ button.play-button{
   border-radius: 20px;
   cursor: pointer;
 }
-
 button.play-button:hover{
-  background-color: #17e650; /* A lighter green */
+  background-color: #17e650;
+ /* A lighter green */
 }
-
-
 #tracksContainer {
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  align-items: center; /* This will center the track divs */
-  max-width: 800px; /* Adjust the max-width as needed */
+  align-items: center;
+ /* This will center the track divs */
+  max-width: 800px;
+ /* Adjust the max-width as needed */
   margin: 20px auto;
   padding: 50px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
 .track {
   display: flex;
-  flex-direction: row; /* Arrange elements in a row */
-  align-items: center; /* Center items in the track div */
+  flex-direction: row;
+ /* Arrange elements in a row */
+  align-items: center;
+ /* Center items in the track div */
   background-color: var(--spotify-dark-gray);
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
-  width: 100%; /* Make the track div take full width of the container */
+  width: 100%;
+ /* Make the track div take full width of the container */
 }
-
 .track img {
-    width: 60px; /* Adjust image size */
-    height: 60px; /* Adjust image size */
-    margin-left: 10px; /* Space between image and track info */
-    object-fit: cover; /* Ensure the image covers the area without distortion */
-    border-radius: 5px; /* Optional: round the corners of the image */
+  width: 60px;
+ /* Adjust image size */
+  height: 60px;
+ /* Adjust image size */
+  margin-left: 10px;
+ /* Space between image and track info */
+  object-fit: cover;
+ /* Ensure the image covers the area without distortion */
+  border-radius: 5px;
+ /* Optional: round the corners of the image */
 }
 .track h3 {
   margin: 0;
-  font-size: 1rem; /* Adjust font size */
+  font-size: 1rem;
+ /* Adjust font size */
   color: var(--spotify-white);
-  flex-grow: 1; /* Allows the track name to take up available space */
+  flex-grow: 1;
+ /* Allows the track name to take up available space */
 }
-
 .track p {
   padding: 5px;
   margin: 0;
-  font-size: 0.8rem; /* Adjust font size */
+  font-size: 0.8rem;
+ /* Adjust font size */
   color: var(--spotify-light-gray);
 }
-
 .track a {
-  margin-left: auto; /* Pushes the link to the end of the container */
+  margin-left: auto;
+ /* Pushes the link to the end of the container */
   padding: 5px 10px;
   background-color: var(--spotify-green);
   color: var(--spotify-white);
   border-radius: 20px;
   font-size: 0.8rem;
 }
-
 #innerContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-height: 120px;
+  padding: 20px;
+}
 #userContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    margin: 10px 10px 10px 10px;
-    background-color: var(--spotify-dark-gray);    
-    color: var(--spotify-white);
-    border-radius: 25px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  margin: 10px 10px 10px 10px;
+  margin-left: auto;
+  color: var(--spotify-white);
+  background-color: var(--spotify-black);
+  border-radius: 45px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-  
+
+
+#profileMenu {
+  padding: 20px;
+}
+
 .user-profile {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
-
-
-  
 .profile-pic {
-    box-shadow: 9px 9px 8px rgba(0, 0, 0, 0.1);
-    width: 100px; /* You can set the size you want */
-    height: 100px; /* Make sure it's the same as the width to keep the aspect ratio */
-    border-radius: 50%; /* Circular profile pictures */
-    object-fit: cover;
+  box-shadow: 9px 9px 8px rgba(0, 0, 0, 0.1);
+  width: 80px;
+ /* You can set the size you want */
+  height: 80px;
+ /* Make sure it's the same as the width to keep the aspect ratio */
+  border-radius: 50%;
+ /* Circular profile pictures */
+  object-fit: cover;
 }
-
 .profile-pic:hover {
   transform: scale(1.1);
 }
-
-.user-info {
-        /* text-shadow: 1px 1px 3px #282828; */
-}
-  
 .user-info h2 {
-    /* text-shadow: 1px 1px 3px #282828; */
-    color: var(--spotify-white);
-    margin: 0;
+ /* text-shadow: 1px 1px 3px #282828;
+  */
+  color: var(--spotify-white);
+  margin: 0;
 }
-  
 .user-info p {
-    /* text-shadow: 1px 1px 3px #282828; */
-    margin: 5px 0;
+ /* text-shadow: 1px 1px 3px #282828;
+  */
+  margin: 5px 0;
 }
-
-
 #facecards-container {
   padding: 20px;
   overflow: visible;
   display: flex;
   align-items: stretch;
   justify-content: center;
-  flex-wrap: nowrap; /* Allows multiple rows as needed */
-  gap: 20px; /* Adjust the space between cards */
+  flex-wrap: nowrap;
+ /* Allows multiple rows as needed */
+  gap: 20px;
+ /* Adjust the space between cards */
 }
-
 .track-facecard {
   border: 1px solid #ccc;
   border-radius: 10px;
-  width: 600px; /* Fixed width, you can make this responsive if needed */
-  overflow: hidden; /* Ensures the image does not break the border-radius */
+  width: 600px;
+ /* Fixed width, you can make this responsive if needed */
+  overflow: hidden;
+ /* Ensures the image does not break the border-radius */
   background: var(--spotify-dark-gray);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease-out, box-shadow 0.3s ease; /* Smooth transition for hover effect */
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease;
+ /* Smooth transition for hover effect */
 }
-
 .track-facecard:hover {
-  transform: translateY(-5px); /* Slightly raise the card on hover */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Increase shadow on hover */
+  transform: translateY(-5px);
+ /* Slightly raise the card on hover */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+ /* Increase shadow on hover */
 }
-
 .track-facecard img.track-image {
   width: 100%;
-  height: 300px; /* Fixed height, or 'auto' for variable */
-  object-fit: cover; /* Ensures the image covers the area nicely */
-  transition: opacity 0.3s ease-in-out; /* Smooth transition for image hover */
+  height: 300px;
+ /* Fixed height, or 'auto' for variable */
+  object-fit: cover;
+ /* Ensures the image covers the area nicely */
+  transition: opacity 0.3s ease-in-out;
+ /* Smooth transition for image hover */
 }
-
 .track-facecard:hover img.track-image {
-  opacity: 0.9; /* Slight transparency on hover */
+  opacity: 0.9;
+ /* Slight transparency on hover */
 }
-
 .track-facecard .track-info {
   padding: 15px;
   text-align: center;
 }
-
-.track-facecard .track-info h3,
-.track-facecard .track-info p,
-.track-facecard .track-info small {
-  margin: 5px
-
+.track-facecard .track-info h3, .track-facecard .track-info p, .track-facecard .track-info small {
+  margin: 5px 
 }
-
 .track-facecard {
-  /* ... other styles ... */
-  position: relative; /* Needed for absolute positioning of children */
-  opacity: 1; /* Default opacity */
-  transition: transform 0.5s, opacity 0.5s; /* Animation duration */
+ /* ... other styles ... */
+  position: relative;
+ /* Needed for absolute positioning of children */
+  opacity: 1;
+ /* Default opacity */
+  transition: transform 0.5s, opacity 0.5s;
+ /* Animation duration */
 }
-
 /* New classes for animations */
 .fade-out {
   opacity: 0;
 }
-
 .slide-up {
   transform: translateY(-100%);
 }
-
 .slide-down {
   transform: translateY(50%);
 }
-
 .track-facecard.fade-out.slide-up {
   transition: scale(1.05);
 }
 /* Ensure animations play when classes are added */
-.track-facecard.fade-out.slide-up,
-.track-facecard.fade-out.slide-down {
+.track-facecard.fade-out.slide-up, .track-facecard.fade-out.slide-down {
   transition: transform 0.5s, opacity 0.5s;
 }
 
+
 #gameContainer {
   font-family: 'Arial', sans-serif;
-  background-color: var(--spotify-black); /* Spotify-like dark background */
+  background-color: var(--spotify-black);
+ /* Spotify-like dark background */
   color: #fff;
-  border-radius: 8px; /* rounded corners */
+  border-radius: 8px;
+ /* rounded corners */
   padding: 20px;
   flex-direction: column;
   justify-content: center;
   align-items: stretch;
-  max-width: 600px; /* Adjust the width as per your design preference */
+  max-width: 600px;
+ /* Adjust the width as per your design preference */
   margin: 0 auto;
 }
-
 #trackContainer {
   margin: 0 auto;
   max-width: 1500px;
   align-items: flex-start;
-  display: flex; /* This will align children divs side by side */
+  display: flex;
+ /* This will align children divs side by side */
   flex-direction: row;
-  justify-content: space-evenly; /* This will put space between the children divs */
+  justify-content: space-evenly;
+ /* This will put space between the children divs */
 }
-
-#tracksTop,
-#tracksRecommendation {
-  flex: 1; /* This will allow both divs to share the available space equally */
-  display: flex; /* Makes the child content of each div align vertically */
-  flex-direction: column; /* Aligns the child content vertically */
-  justify-content: flex-start; /* Aligns the child content to the start vertically */
-  align-items: center; /* Aligns the child content in the center horizontally */
-  padding: 10px; /* Optional: Adds some space inside the divs */
+#tracksTop, #tracksRecommendation {
+  flex: 1;
+ /* This will allow both divs to share the available space equally */
+  display: flex;
+ /* Makes the child content of each div align vertically */
+  flex-direction: column;
+ /* Aligns the child content vertically */
+  justify-content: flex-start;
+ /* Aligns the child content to the start vertically */
+  align-items: center;
+ /* Aligns the child content in the center horizontally */
+  padding: 10px;
+ /* Optional: Adds some space inside the divs */
 }
-
 #tracksTop {
-  margin-right: 10px; /* Half of the total desired space between the divs */
+  margin-right: 10px;
+ /* Half of the total desired space between the divs */
 }
-
 #tracksRecommendation {
-  margin-left: 10px; /* Half of the total desired space between the divs */
+  margin-left: 10px;
+ /* Half of the total desired space between the divs */
 }
-
 #track-start {
   align-items: center;
+}
+
+
+
+
+
+/* SLIDER STUFF LFG */
+#sliderContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 15px;
+  border-radius: 5px;  
+  background-color: rgba(255,255,225, 0.1);
+  outline: none;
+  opacity: 1.0;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%; 
+  background: var(--spotify-green);
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background-color: var(--spotify-green);
+  cursor: pointer;
+}
+
+
+/* BUTTON STUFF */
+
+#checkContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.checkContainer {
+  display: inline-block;
+  padding: 10px 20px;
+  border: 2px solid #ccc;
+  border-radius: 15px;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  /* Add other styles as needed */
+}
+
+.checkContainer input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkContainer.checked {
+  background-color: var(--spotify-green);
+  color: white;
+  /* Other styles for checked state */
+}
+
+
+#containerofUser {
+  background-color: var(--spotify-dark-gray);
+  border-radius: 25px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
 }

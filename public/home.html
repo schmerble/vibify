@@ -13,13 +13,43 @@
         <button id="getTopArtists">Top Artists</button>
         <button id="getTopTracks">Top Tracks</button>
         <button id="logout">Logout</button>
+        <button id="debug">Debug</button>
         <div id=innerContainer>
-            <div id="userContainer" style = "display: flex; overflow-x: auto;"></div>
+            <div id="userContainer" onclick="toggleMenu()" style = "display: flex; overflow-x: auto;">
+                <div id="containerofUser">
+                    <div class="user-info" id="profileMenu" style="display: none;">
+                        <h2 id="name"> Profile Name </h2>
+                        <p id="email"><strong>Email:</strong></p>
+                        <p id="followers"><strong>Followers:</strong></p>
+                        <p id="type"><strong>Type:</strong></p>
+                    </div>
+                    <div id ='icon' class= 'profile-icon'>👤</div>
+                </div>
+            </div>
         </div>
 
         <!-- User module will be created here dynamically -->
         <div id="playlistWrapper">
-            <div id="playlistsContainer" style="display: flex; overflow-x: auto;">
+            <div id="searchBar">
+                <input type="search" id="searchInput" placeholder="&#x1F50D;">
+                <button id="filters"> &#11167; </button>
+            </div>
+            <div id="filterMenu" class = "hidden"> 
+                <div id="sliderContainer">
+                    
+                    <input type="range" min="1" max="100" value="1" class="slider" id="trackRange">
+                    <span id="maxTrackSpan">Max Tracks: 1</span>
+                </div>
+                <div id="checkContainer">
+                    <label class="checkContainer">By you<input type="checkbox" id="ownerCheck">
+                    </label>
+                      <label class="checkContainer">Collaborative<input type="checkbox" id="collabCheck">
+                    </label>
+                      <label class="checkContainer">Public<input type="checkbox" id="publicCheck">
+                    </label>
+                </div>
+            </div>
+            <div id="playlistsContainer">
                 <!-- Playlists will be added here dynamically -->
                 </div>
         </div>
