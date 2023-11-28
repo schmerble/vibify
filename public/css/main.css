@@ -529,3 +529,11 @@ button.play-button:hover{
   display: flex;
   flex-direction: row;
 }
+
+
+#scrollUp {
+  font-size: 20px;
+  position: fixed;
+  margin-left: 85%;
+  top: 85%;
+}

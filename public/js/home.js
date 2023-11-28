@@ -87,6 +87,7 @@ async function loadPlaylistTracks(playlistId) {
 }
 
 
+
 function displayTop(tracks) {
     const gameContainer = document.getElementById('gameContainer')
     gameContainer.style.display = "none";
@@ -341,6 +342,8 @@ function printData(item) {
 document.getElementById('getTopArtists').addEventListener('click', function() {
     callApi('/getTopArtists').then(data => {
         console.log(data)
+        displayArtists(data.items)
+        window.scrollTo({top: document.body.scrollHeight / 3, behavior: 'smooth'});
     }).catch (err => console.log(err))
 });
 
@@ -349,6 +352,7 @@ document.getElementById('getTopTracks').addEventListener('click', function() {
     callApi('/getTopTracks').then(data => {
         console.log(data)
         displayTop(data.items)
+        window.scrollTo({top: document.body.scrollHeight / 3, behavior: 'smooth'});
     }).catch (err => console.log(err))
 });
 document.getElementById('logout').addEventListener('click', function() {
@@ -707,8 +711,35 @@ publicCheck.addEventListener('change', filterPlaylists);
 
 
 function scrollToBottomOfWindow() {
-  window.scrollTo(0, document.body.scrollHeight);
+  window.scrollTo({top:document.body.scrollHeight, behavior: 'smooth'});
+
 }
+
+window.addEventListener('scroll', function() {
+  var scrollPosition = window.scrollY; // Current vertical scroll position
+  var windowHeight = window.innerHeight; // Height of the viewport
+  var documentHeight = document.documentElement.scrollHeight; // Total height of the document
+
+  // Calculate the halfway point
+  var halfwayPoint = documentHeight / 2;
+
+  // Get the button element
+  var myButton = document.getElementById('scrollUp');
+
+  // Show or hide the button based on scroll position
+  if (scrollPosition >= halfwayPoint - windowHeight / 2) {
+      myButton.style.display = 'block'; // Show the button
+  } else {
+      myButton.style.display = 'none'; // Hide the button
+  }
+});
+
+
+var myButton = document.getElementById('scrollUp');
+document.getElementById('scrollUp').addEventListener('click', function() {
+  window.scrollTo({top: 0, behavior: 'smooth'});
+})
+
 
 
 
@@ -749,4 +780,50 @@ function toggleMenu() {
   console.log('click');
   var menu = document.getElementById("profileMenu");
   menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+
+
+
+function displayArtists(artist) {
+  const gameContainer = document.getElementById('gameContainer')
+  gameContainer.style.display = "none";
+  const trackWrapper = document.getElementById('trackContainer');
+  trackWrapper.style.visibility = 'visible';
+  trackWrapper.style.display = 'flex';
+  const tracksContainer = document.getElementById('tracksTop');
+  tracksContainer.style.visibility = 'visible'
+  tracksContainer.style.display = 'flex'
+  
+  tracksContainer.innerHTML = ''; // Clear the tracks container
+
+  const startDiv = document.createElement('div');
+  startDiv.classList.add('track-start');
+  const startText = document.createElement('h3');
+  startText.textContent = "Your Top Artists:"
+  startDiv.appendChild(startText)
+  tracksContainer.appendChild(startDiv)
+  artist.forEach((artistInfo, index) => { 
+      index++;
+      const trackDiv = document.createElement('div');
+      trackDiv.classList.add('track');
+      
+  
+      const trackName = document.createElement('h3');
+      trackName.textContent = index + ". " + artistInfo.name;
+  
+      trackDiv.addEventListener('click', () => {
+        window.open(artistInfo.external_urls.spotify, '_blank');
+      });
+  
+      const albumImage = new Image();
+      albumImage.src = artistInfo.images[0].url; // The URL to the album cover image
+
+      // Append the new elements to the trackDiv
+      trackDiv.appendChild(trackName);
+      trackDiv.appendChild(albumImage);
+
+      // Append the trackDiv to the tracksContainer
+      tracksContainer.appendChild(trackDiv);
+  });
 }
