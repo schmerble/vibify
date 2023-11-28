@@ -329,17 +329,13 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // uhhh, doesn't do anything, it's meant to get profile information
-document.getElementById('getMeButton').addEventListener('click', function() {
-    callApi('/getSelf').then(data => console.log(data))
-});
+
 
 function printData(item) {
   console.log(item);
 };
 
-document.getElementById('debug').addEventListener('click', function() {
-  playListData.forEach(printData)
-});
+
 
 // deprecated function
 document.getElementById('getTopArtists').addEventListener('click', function() {
@@ -651,9 +647,16 @@ checkboxes.forEach(checkbox => {
 
 document.getElementById('searchInput').addEventListener('input', function(e) {
   const searchTerm = e.target.value.toLowerCase();
+  const filterByOwner = ownerCheck.checked;
+  const filterByCollab = collabCheck.checked;
+  const filterByPublic = publicCheck.checked;
   playListData.forEach(playlist => {
       const title = playlist.title.toLowerCase();
-      if (title.includes(searchTerm)) {
+      let showPlaylist = (!filterByOwner || playlist.madeBy) && // Show if 'By you' is not checked or if the playlist is made by the user
+      (!filterByCollab || playlist.collaborative) && // Show if 'Collaborative' is not checked or if the playlist is collaborative
+      (!filterByPublic || playlist.public) &&
+      (title.includes(searchTerm));
+      if (showPlaylist) {
           playlist.object.classList.remove('hidden');
           playlist.object.style.display = 'block'; // Reset to default or 'block'
       } else {
