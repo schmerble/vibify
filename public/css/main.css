@@ -95,9 +95,10 @@ h3 {
 }
 /* Add hover effect for interactive elements */
 .button, .track, .playlist {
-  transition: transform 0.3s ease-in-out;
+  transition: transform 0.8s ease-in-out;
 }
 .button:hover, .track:hover, .playlist:hover {
+  transition: transform 0.2s ease-out;
   transform: scale(1.05);
 }
 
@@ -145,6 +146,7 @@ h3 {
 }
 .selected {
   background-color: #282828;
+  border: 1px solid var(--spotify-green);
  /* Darker background for contrast */
 }
 .playlist {
@@ -407,6 +409,7 @@ button.play-button:hover{
   justify-content: center;
   align-items: stretch;
   max-width: 600px;
+  min-height: 100vh;
  /* Adjust the width as per your design preference */
   margin: 0 auto;
 }

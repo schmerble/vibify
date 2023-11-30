@@ -58,6 +58,7 @@ function populatePlaylists(playlists) {
         console.log("sanity check", maxNumTracks);
 
       }
+      console.log(playlist);
       playListData.push(
         {
         'title': playlist.name,
@@ -144,7 +145,7 @@ function displayTop(tracks) {
           if (audio) audio.pause(); // Pause any currently playing audio
           audio = new Audio(trackInfo.preview_url); // get an audio preview of the track
           audio.play(); // 
-          playButton.textContent = '| |'; // change playButton to contain text symbolizing pause button
+          playButton.textContent = `| |`; // change playButton to contain text symbolizing pause button
           currentPlayButton = playButton; // keep track of the playButton that is currently active
 
           setTimeout(() => { // Stop playing after 30 seconds
@@ -400,7 +401,7 @@ function createTrackComponent(trackdata){
     const faceCard = document.createElement('div'); // Creating div called facecard to hold track specific information
     faceCard.className = 'track-facecard'; // Let our facecard inherit the CSS styling declared in main.css
     const image = document.createElement('img'); // Create an img to hold the song cover art 
-    image.src = track.album.images[0].url; // attribute that holds the album cover for the track
+    image.src = track.album.images[0].url ? track.album.images[0].url : ''; // attribute that holds the album cover for the track
     image.alt = track.album.name; // attribute that holds the name for the 
     image.className = 'track-image';
         
